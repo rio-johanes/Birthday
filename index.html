@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Sideways Falling Text - Perfect Fill</title>
+<style>
+  /* Mencegah scrollbar dan set background hitam pekat */
+  body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #000000;
+    color: white;
+    font-family: 'Arial', sans-serif;
+    /* Memberikan efek kedalaman 3D secara umum */
+    perspective: 1200px; 
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* Kontainer utama yang dimiringkan */
+  #scene {
+    position: absolute;
+    /* Dibuat lebih lebar dan tinggi dari layar agar saat miring tetap penuh */
+    top: -15vh;
+    left: -15vw;
+    width: 130vw;
+    height: 130vh;
+    transform-style: preserve-3d;
+    
+    /* PENYEMPURNAAN: Sudut miring samping yang lebih natural (rotateY) 
+       dan di-scale agar menutup seluruh layar tanpa ada area kosong di kanan */
+    transform: rotateY(-30deg) rotateX(10deg) rotateZ(-3deg) scale(1.15);
+    transform-origin: center center;
+  }
+
+  /* Styling umum untuk item yang jatuh */
+  .falling-item {
+    position: absolute;
+    white-space: nowrap;
+    /* Efek glow putih/cyberpunk lembut */
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 
+                 0 0 15px rgba(255, 255, 255, 0.4),
+                 0 0 30px rgba(200, 200, 255, 0.2);
+    /* Animasi mengalir ke bawah */
+    animation: fallDown linear infinite;
+    opacity: 0;
+  }
+
+  /* Styling jika item adalah gambar/foto */
+  .falling-img {
+    width: 90px;
+    height: auto;
+    border-radius: 6px;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+    object-fit: cover;
+  }
+
+  /* Animasi jatuh dari atas ke bawah */
+  @keyframes fallDown {
+    0% {
+      transform: translateY(-20vh) translateZ(0);
+      opacity: 0;
+    }
+    10% { opacity: 0.75; }
+    90% { opacity: 0.75; }
+    100% {
+      transform: translateY(140vh) translateZ(0); /* jatuh melewati batas bawah */
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Tempat semua teks & gambar berada -->
+<div id="scene"></div>
+
+<script>
+  const scene = document.getElementById('scene');
+  
+  // Kata-kata dekoratif (kamu bisa ganti sesuai kebutuhan)
+  const words = [
+    "aku jadinya tau", "sayanggg", "semoga kita", "hadir di hidup aku",
+    "makasih yaa", "selalu sama-sama", "the best part", "i love you",
+    "semenjak kamu dateng", "banyak yang berubah", "favorit aku selamanya",
+    "dan takkan terganti", "untuk selamanya", "bersamamu aku bahagia",
+    "could be the deep in love", "terima kasih", "kamu yang terbaik"
+  ];
+
+  // Gambar-gambar random dari internet (atau ganti dengan foto-fotomu)
+  const imageSources = [
+    "https://picsum.photos/120/120?random=1",
+    "https://picsum.photos/120/120?random=2",
+    "https://picsum.photos/120/120?random=3",
+    "https://picsum.photos/120/120?random=4",
+    "https://picsum.photos/120/120?random=5",
+    "https://picsum.photos/120/120?random=6",
+    "https://picsum.photos/120/120?random=7",
+    "https://picsum.photos/120/120?random=8"
+  ];
+
+  // Fungsi untuk membuat elemen mengalir
+  function createFallingElement(isImage = false) {
+    let el;
+    
+    if (isImage) {
+      el = document.createElement('img');
+      // Ambil acak dari kumpulan gambar
+      el.src = imageSources[Math.floor(Math.random() * imageSources.length)];
+      el.className = 'falling-item falling-img';
+    } else {
+      el = document.createElement('div');
+      el.className = 'falling-item';
+      el.innerText = words[Math.floor(Math.random() * words.length)];
+      
+      // Mengatur ukuran font secara bervariasi
+      el.style.fontSize = (12 + Math.random() * 24) + 'px';
+      if (Math.random() > 0.6) {
+        el.style.fontWeight = 'bold';
+      }
+    }
+
+    // PENYEMPURNAAN: Menyebar secara horizontal di sepanjang 100% lebar scene yang baru
+    el.style.left = (Math.random() * 100) + '%';
+    
+    // Memberikan variasi kecepatan (durasi) agar tidak terlihat monoton
+    el.style.animationDuration = (8 + Math.random() * 12) + 's';
+    
+    // Delay negatif acak agar layar langsung penuh saat web dibuka
+    el.style.animationDelay = (Math.random() * -20) + 's'; 
+
+    scene.appendChild(el);
+  }
+
+  // PENYEMPURNAAN: Meningkatkan jumlah (densitas) agar merata dan tidak sepi
+  // 120 Teks
+  for (let i = 0; i < 120; i++) {
+    createFallingElement(false);
+  }
+
+  // 25 Gambar
+  for (let i = 0; i < 25; i++) {
+    createFallingElement(true);
+  }
+</script>
+
+</body>
+</html>
